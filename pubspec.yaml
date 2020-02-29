@@ -30,7 +30,9 @@ dependencies:
   firebase_database: ^3.1.1
   font_awesome_flutter: ^8.7.0
   animated_card: ^1.0.0+8
-
+  video_thumbnail: ^0.2.0
+  neeko: ^0.0.6
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 
 class SubscribeWidget extends StatefulWidget {
-  SubscribeWidget(this.status, {this.channelID, this.userID});
+  SubscribeWidget(this.status,
+      {this.channelID, this.userID, @required this.onClick});
   final String userID;
   final String channelID;
-  final bool status;
+  bool status;
+  Function(bool status) onClick;
   @override
   _SubscribeWidgetState createState() => _SubscribeWidgetState();
 }
 
 class _SubscribeWidgetState extends State<SubscribeWidget> {
-  bool _selected;
   Color clr = Colors.grey;
 
   @override
   void initState() {
-    _selected = widget.status;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_selected) {
+    if (widget.status) {
       clr = Colors.red;
     } else {
       clr = Colors.grey;
@@ -31,10 +31,9 @@ class _SubscribeWidgetState extends State<SubscribeWidget> {
       child: RaisedButton(
         onPressed: () {
           setState(() {
-            
-            _selected = !_selected;
-            print(_selected);
-            
+            widget.status = !widget.status;
+            print(widget.status);
+            widget.onClick(widget.status);
           });
         },
         child: Text(

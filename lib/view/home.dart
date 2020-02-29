@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(FontAwesomeIcons.bars),
             onPressed: () {
               _drawerKey.currentState.openDrawer();
-              // Scaffold.of(context).openDrawer();
             }),
         actions: <Widget>[
           IconButton(icon: Icon(FontAwesomeIcons.search), onPressed: () {}),

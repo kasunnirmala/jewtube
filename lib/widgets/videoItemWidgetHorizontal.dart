@@ -5,15 +5,16 @@ import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/widgets/subscribe.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-class VideoItemWidget extends StatefulWidget {
-  VideoItemWidget(this.videoModel, this.onClick);
+class VideoItemWidgetHorizontal extends StatefulWidget {
+  VideoItemWidgetHorizontal(this.videoModel, this.onClick);
   final VideoModel videoModel;
   Function onClick;
   @override
-  _VideoItemWidgetState createState() => _VideoItemWidgetState();
+  _VideoItemWidgetHorizontalState createState() =>
+      _VideoItemWidgetHorizontalState();
 }
 
-class _VideoItemWidgetState extends State<VideoItemWidget> {
+class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
   var _thumbImage;
   bool _progress = true;
   final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
@@ -103,62 +104,66 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Container(
-        child: Column(
-      children: <Widget>[
-        _progress
-            ? Center(child: CircularProgressIndicator())
-            : GestureDetector(
-                child: Image.memory(
-                  _thumbImage,
-                  height: height * 0.25,
-                  width: width,
-                  fit: BoxFit.cover,
-                ),
-                onTap: () {
-                  
-                  widget.onClick();
-                },
-              ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.videoModel.videoTitle,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+        width: width,
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _progress
+                ? Center(child: CircularProgressIndicator())
+                : GestureDetector(
+                    child: Image.memory(
+                      _thumbImage,
+                      height: height * 0.1,
+                      width: width * 0.3,
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      widget.onClick();
+                    },
                   ),
-                  Text(widget.videoModel.channelName)
-                ],
-              ),
-              SubscribeWidget(
-                widget.videoModel.sub,
-                onClick: (status) {
-                  print(status);
-                  setState(() {
-                    print("PPPPPPPPPPPPP" + subList.toString());
-                    print(widget.videoModel.channelName);
-                    if (status) {
-                      subList.add(widget.videoModel.channelName);
-                    } else {
-                      subList.remove(widget.videoModel.channelName);
-                    }
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                // width: width*0.5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                            widget.videoModel.videoTitle,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        Text(widget.videoModel.channelName)
+                      ],
+                    ),
+                    SubscribeWidget(
+                      widget.videoModel.sub,
+                      onClick: (status) {
+                        print(status);
+                        setState(() {
+                          print("PPPPPPPPPPPPP" + subList.toString());
+                          print(widget.videoModel.channelName);
+                          if (status) {
+                            subList.add(widget.videoModel.channelName);
+                          } else {
+                            subList.remove(widget.videoModel.channelName);
+                          }
 
-                    db
-                        .reference()
-                        .child("user_subs")
-                        .child(Resources.userID)
-                        .set(subList);
-                  });
-                },
-              )
-            ],
-          ),
-        )
-      ],
-    ));
+                          db
+                              .reference()
+                              .child("user_subs")
+                              .child(Resources.userID)
+                              .set(subList);
+                        });
+                      },
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }
