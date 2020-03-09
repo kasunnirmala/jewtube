@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jewtube/view/add_video.dart';
 import 'package:jewtube/view/videoList.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -61,6 +63,34 @@ class _HomeScreenState extends State<HomeScreen> {
           bmnav.BottomNavItem(Icons.dashboard),
           bmnav.BottomNavItem(Icons.notifications)
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Alert(
+            context: context,
+            title: "SELECT CHANNEL",
+            content: Column(children: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => AddVideoScreen("channel1")));
+                  },
+                  child: Text("Channel 1")),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => AddVideoScreen("channel2")));
+                  },
+                  child: Text("Channel 2")),
+            ]),
+          ).show();
+        },
+        tooltip: 'ADD VIDEO',
+        child: Icon(Icons.add),
       ),
     );
   }

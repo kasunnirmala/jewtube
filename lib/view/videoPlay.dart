@@ -6,7 +6,8 @@ import 'package:jewtube/model/video.dart';
 import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/widgets/subscribe.dart';
 import 'package:jewtube/widgets/videoItemWidgetHorizontal.dart';
-import 'package:neeko/neeko.dart';
+import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   VideoPlayerScreen(this.videoModel, {this.prevModel});
@@ -18,8 +19,8 @@ class VideoPlayerScreen extends StatefulWidget {
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
-
-  VideoControllerWrapper videoControllerWrapper;
+  VideoPlayerController _videoPlayerController;
+  ChewieController _chewieController;
   List subList = List();
   List<VideoModel> _videoList = List();
 
@@ -104,18 +105,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       getAllVideos(snapshot);
     });
 
+    super.initState();
     getSubscription();
     setUpdate();
-    videoControllerWrapper = VideoControllerWrapper(DataSource.network(
-        widget.videoModel.videoURL,
-        displayName: widget.videoModel.videoTitle));
-    super.initState();
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    _videoPlayerController =
+        VideoPlayerController.network(widget.videoModel.videoURL);
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: false,
+      // placeholder: Container(
+      //   color: Colors.grey,
+      // ),
+      // autoInitialize: true,
+    );
   }
 
   @override
   void dispose() {
-    SystemChrome.restoreSystemUIOverlays();
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -127,44 +138,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       body: Container(
         child: Column(
           children: <Widget>[
-            Container(
-              child: NeekoPlayerWidget(
-                onSkipNext: () {
-                  _videoList.length > 0
-                      ? Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) => VideoPlayerScreen(
-                                    _videoList[0],
-                                    prevModel: widget.videoModel,
-                                  )))
-                      : {};
-                },
-                onSkipPrevious: () {
-                  widget.prevModel != null
-                      ? Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) => VideoPlayerScreen(
-                                    _videoList[0],
-                                    prevModel: null,
-                                  )))
-                      : {};
-                },
-                videoControllerWrapper: videoControllerWrapper,
-                actions: <Widget>[
-                  IconButton(
-                      icon: Icon(
-                        Icons.share,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        print("share");
-                      })
-                ],
-              ),
-              height: height * 0.3,
-              width: width,
+            Chewie(
+              controller: _chewieController,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -206,7 +181,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               ),
             ),
             Container(
-              height: height * 0.55,
+              height: height * 0.4,
               width: width,
               child: SingleChildScrollView(
                 child: Container(
