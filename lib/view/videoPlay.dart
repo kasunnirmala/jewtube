@@ -134,95 +134,97 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Chewie(
-              controller: _chewieController,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.videoModel.videoTitle,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(widget.videoModel.channelName)
-                    ],
-                  ),
-                  SubscribeWidget(
-                    widget.videoModel.sub,
-                    onClick: (status) {
-                      print(status);
-                      setState(() {
-                        print("PPPPPPPPPPPPP" + subList.toString());
-                        print(widget.videoModel.channelName);
-                        if (status) {
-                          subList.add(widget.videoModel.channelName);
-                        } else {
-                          subList.remove(widget.videoModel.channelName);
-                        }
-
-                        db
-                            .reference()
-                            .child("user_subs")
-                            .child(Resources.userID)
-                            .set(subList);
-                      });
-                    },
-                  )
-                ],
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Chewie(
+                controller: _chewieController,
               ),
-            ),
-            Container(
-              height: height * 0.4,
-              width: width,
-              child: SingleChildScrollView(
-                child: Container(
-                  height: height * 0.55,
-                  width: width,
-                  child: ListView.builder(
-                      itemCount: _videoList.length,
-                      itemBuilder: (context, index) {
-                        if (widget.videoModel.videoId ==
-                            _videoList[index].videoId) {
-                          return Container(
-                            height: 0,
-                            width: 0,
-                          );
-                        } else {
-                          return AnimatedCard(
-                              direction: AnimatedCardDirection.left,
-                              initDelay: Duration(milliseconds: 0),
-                              duration: Duration(seconds: 1),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Card(
-                                  elevation: 5,
-                                  child: VideoItemWidgetHorizontal(
-                                      _videoList[index], () {
-                                    print("object");
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (builder) =>
-                                                VideoPlayerScreen(
-                                                    _videoList[index])));
-                                  }),
-                                ),
-                              ));
-                        }
-                      }),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.videoModel.videoTitle,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(widget.videoModel.channelName)
+                      ],
+                    ),
+                    SubscribeWidget(
+                      widget.videoModel.sub,
+                      onClick: (status) {
+                        print(status);
+                        setState(() {
+                          print("PPPPPPPPPPPPP" + subList.toString());
+                          print(widget.videoModel.channelName);
+                          if (status) {
+                            subList.add(widget.videoModel.channelName);
+                          } else {
+                            subList.remove(widget.videoModel.channelName);
+                          }
+
+                          db
+                              .reference()
+                              .child("user_subs")
+                              .child(Resources.userID)
+                              .set(subList);
+                        });
+                      },
+                    )
+                  ],
                 ),
               ),
-            ),
-          ],
+              Container(
+                height: height * 0.5,
+                width: width,
+                child: SingleChildScrollView(
+                  child: Container(
+                    height: height * 0.5,
+                    width: width,
+                    child: ListView.builder(
+                        itemCount: _videoList.length,
+                        itemBuilder: (context, index) {
+                          if (widget.videoModel.videoId ==
+                              _videoList[index].videoId) {
+                            return Container(
+                              height: 0,
+                              width: 0,
+                            );
+                          } else {
+                            return AnimatedCard(
+                                direction: AnimatedCardDirection.left,
+                                initDelay: Duration(milliseconds: 0),
+                                duration: Duration(seconds: 1),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Card(
+                                    elevation: 5,
+                                    child: VideoItemWidgetHorizontal(
+                                        _videoList[index], () {
+                                      print("object");
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                                  VideoPlayerScreen(
+                                                      _videoList[index])));
+                                    }),
+                                  ),
+                                ));
+                          }
+                        }),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

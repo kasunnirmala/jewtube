@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
       title: 'JewTube',
       home: SafeArea(
         child: HomeScreen(),
-        // child: VPL(),
       ),
       debugShowCheckedModeBanner: false,
+      
       
     );
   }

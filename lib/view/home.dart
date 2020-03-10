@@ -1,6 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jewtube/model/channel.dart';
+import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/view/add_video.dart';
 import 'package:jewtube/view/videoList.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -13,9 +16,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _navIndex = 0;
   final _drawerKey = GlobalKey<ScaffoldState>();
+  List<Channel> _channelList = List();
+
+  @override
+  void initState() {
+    final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
+
+    db.reference().child("channels").once().then((DataSnapshot snapshot) {
+      snapshot.value.forEach((channelId, value) {
+        setState(() {
+          _channelList.add(Channel(
+              channelName: value['Channel_name'],
+              imgUrl: value['Channel_image']));
+        });
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       key: _drawerKey,
       drawer: Drawer(),
       appBar: AppBar(
@@ -67,26 +89,27 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Alert(
+            style: AlertStyle(isCloseButton: false),
             context: context,
             title: "SELECT CHANNEL",
             content: Column(children: <Widget>[
-              FlatButton(
-                  onPressed: () {
+              for (var channel in _channelList)
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(channel.imgUrl),
+                  ),
+                  title: Text(channel.channelName),
+                  onTap: () {
+                    Navigator.pop(context);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (builder) => AddVideoScreen("channel1")));
+                            builder: (builder) =>
+                                AddVideoScreen(channel.channelName)));
                   },
-                  child: Text("Channel 1")),
-              FlatButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (builder) => AddVideoScreen("channel2")));
-                  },
-                  child: Text("Channel 2")),
+                ),
             ]),
+            buttons: List(),
           ).show();
         },
         tooltip: 'ADD VIDEO',
