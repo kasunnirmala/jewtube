@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/view/home.dart';
+import 'package:jewtube/view/login/constants/constants.dart';
+import 'package:jewtube/view/login/ui/signin.dart';
+import 'package:jewtube/view/login/ui/signup.dart';
+import 'package:jewtube/view/login/ui/splashscreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,13 +35,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'JewTube',
-      home: SafeArea(
-        child: HomeScreen(),
-      ),
+      // home: SafeArea(
+      //   child: HomeScreen(),
+      // ),
       debugShowCheckedModeBanner: false,
-      
-      
+      routes: <String, WidgetBuilder>{
+        SPLASH_SCREEN: (BuildContext context) => SplashScreen(),
+        SIGN_IN: (BuildContext context) => SignInPage(),
+        SIGN_UP: (BuildContext context) => SignUpScreen(),
+        HOME: (BuildContext context) => HomeScreen(),
+      },
+      initialRoute: SPLASH_SCREEN,
     );
   }
 }
-

@@ -24,9 +24,11 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
       maxHeight: 500,
       quality: 25,
     );
-    setState(() {
-      _progress = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        _progress = false;
+      });
+    }
   }
 
   List subList = List();
@@ -36,29 +38,35 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
         .reference()
         .child("user_subs")
         .child(Resources.userID)
-        .once()
-        .then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        if (snapshot.value.contains(widget.videoModel.channelName)) {
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value != null) {
+        if (event.snapshot.value.contains(widget.videoModel.channelName)) {
           subList.clear();
-          setState(() {
-            subList.addAll(snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
+          if (this.mounted) {
+            setState(() {
+              subList.addAll(event.snapshot.value);
+              print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+                  subList.toString());
+              widget.videoModel.sub = true;
+            });
+          }
         } else {
+          if (this.mounted) {
+            setState(() {
+              subList.clear();
+              subList.addAll(event.snapshot.value);
+              widget.videoModel.sub = false;
+            });
+          }
+        }
+      } else {
+        if (this.mounted) {
           setState(() {
             subList.clear();
-            subList.addAll(snapshot.value);
             widget.videoModel.sub = false;
           });
         }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
       }
     });
   }
@@ -68,24 +76,30 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
       if (event.snapshot.value != null) {
         if (event.snapshot.value.contains(widget.videoModel.channelName)) {
           subList.clear();
-          setState(() {
-            subList.addAll(event.snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
+          if (this.mounted) {
+            setState(() {
+              subList.addAll(event.snapshot.value);
+              print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+                  subList.toString());
+              widget.videoModel.sub = true;
+            });
+          }
         } else {
+          if (this.mounted) {
+            setState(() {
+              subList.clear();
+              subList.addAll(event.snapshot.value);
+              widget.videoModel.sub = false;
+            });
+          }
+        }
+      } else {
+        if (this.mounted) {
           setState(() {
             subList.clear();
-            subList.addAll(event.snapshot.value);
             widget.videoModel.sub = false;
           });
         }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
       }
     });
   }
@@ -115,7 +129,6 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
                   fit: BoxFit.cover,
                 ),
                 onTap: () {
-                  
                   widget.onClick();
                 },
               ),

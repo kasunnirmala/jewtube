@@ -25,9 +25,11 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
       maxHeight: 500,
       quality: 25,
     );
-    setState(() {
-      _progress = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        _progress = false;
+      });
+    }
   }
 
   List subList = List();
@@ -42,24 +44,30 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
       if (snapshot.value != null) {
         if (snapshot.value.contains(widget.videoModel.channelName)) {
           subList.clear();
-          setState(() {
-            subList.addAll(snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
+          if (this.mounted) {
+            setState(() {
+              subList.addAll(snapshot.value);
+              print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+                  subList.toString());
+              widget.videoModel.sub = true;
+            });
+          }
         } else {
+          if (this.mounted) {
+            setState(() {
+              subList.clear();
+              subList.addAll(snapshot.value);
+              widget.videoModel.sub = false;
+            });
+          }
+        }
+      } else {
+        if (this.mounted) {
           setState(() {
             subList.clear();
-            subList.addAll(snapshot.value);
             widget.videoModel.sub = false;
           });
         }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
       }
     });
   }
@@ -132,9 +140,9 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                            widget.videoModel.videoTitle,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          widget.videoModel.videoTitle,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Text(widget.videoModel.channelName)
                       ],
                     ),

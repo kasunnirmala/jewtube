@@ -182,11 +182,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 ),
               ),
               Container(
-                height: height * 0.5,
+                height: height - ((height * 0.15) + width * 2/3),
                 width: width,
                 child: SingleChildScrollView(
                   child: Container(
-                    height: height * 0.5,
+                    height: height - ((height * 0.15) + width *2/3),
                     width: width,
                     child: ListView.builder(
                         itemCount: _videoList.length,

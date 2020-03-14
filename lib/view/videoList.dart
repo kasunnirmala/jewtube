@@ -15,14 +15,9 @@ class _VideoListScreenState extends State<VideoListScreen> {
   @override
   void initState() {
     final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
-
-    db.reference().child("videos").once().then((DataSnapshot snapshot) {
-      // print(snapshot.value);
-      getAllVideos(snapshot);
-    });
     db.reference().child("videos").onValue.listen((Event event) {
       getAllVideos(event.snapshot);
-      // print(event.snapshot.value);
+      print(event.snapshot.value);
     });
     super.initState();
   }
