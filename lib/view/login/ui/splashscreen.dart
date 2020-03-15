@@ -30,7 +30,7 @@ class SplashScreenState extends State<SplashScreen>
     print(status && uid != "");
     if (status) {
       setState(() {
-        Resources.isAdmin = true;
+        Resources.isAdmin = uid == "admin" ? true : false;
         Resources.userID = uid;
       });
       Navigator.of(context).pushReplacementNamed(HOME);

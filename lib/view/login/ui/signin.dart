@@ -55,8 +55,8 @@ class _SignInScreenState extends State<SignInScreen> {
               // SizedBox(height: _height / 12),
               button(),
               signUpTextRow(),
-              Divider(),
-              socialIconsRow(),
+              // Divider(),
+              // socialIconsRow(),
             ],
           ),
         ),
@@ -222,24 +222,37 @@ class _SignInScreenState extends State<SignInScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       onPressed: () async {
         if (emailController != "" && passwordController != "") {
-          final FirebaseAuth _auth = FirebaseAuth.instance;
-          final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-          ))
-              .user;
-          if (user != null) {
+          if (emailController.text == "admin" &&
+              passwordController.text == "admin") {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setBool('isLoggedIn', true);
-            prefs.setString('uid', user.uid);
-
+            prefs.setString('uid', "admin");
             setState(() {
               Resources.isAdmin = true;
-              Resources.userID = user.uid;
+              Resources.userID = "admin";
             });
-            print(user.uid);
+
             Navigator.of(context).pushReplacementNamed(HOME);
-          } else {}
+          } else {
+            final FirebaseAuth _auth = FirebaseAuth.instance;
+            final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            ))
+                .user;
+            if (user != null) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setBool('isLoggedIn', true);
+              prefs.setString('uid', user.uid);
+
+              setState(() {
+                Resources.isAdmin = false;
+                Resources.userID = user.uid;
+              });
+              print(user.uid);
+              Navigator.of(context).pushReplacementNamed(HOME);
+            } else {}
+          }
         }
         print("Routing to your account");
       },

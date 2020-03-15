@@ -52,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 button(context),
                 infoTextRow(),
-                socialIconsRow(),
+                // socialIconsRow(),
                 //signInTextRow(),
               ],
             ),
