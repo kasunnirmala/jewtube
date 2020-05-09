@@ -2,15 +2,21 @@ import 'package:flutter/cupertino.dart';
 
 class VideoModel {
   VideoModel(
-      {@required this.channelName,
+      {@required this.channelID,
+      @required this.channelName,
+      @required this.channelImage,
       @required this.videoTitle,
       @required this.videoURL,
       @required this.videoId,
-      this.sub = false});
+      @required this.thumbNail,
+      @required this.sub});
 
+  final String channelID;
   final String channelName;
+  final String channelImage;
   final String videoTitle;
   final String videoURL;
-   bool sub;
+  final String thumbNail;
+  bool sub;
   final String videoId;
 }

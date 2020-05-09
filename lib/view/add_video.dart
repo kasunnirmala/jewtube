@@ -1,27 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jewtube/view/videoList.dart';
 import 'package:jewtube/util/Resources.dart';
+import 'package:path/path.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:uuid/uuid.dart';
 
 class AddVideoScreen extends StatefulWidget {
-  AddVideoScreen(this.channelName);
-  final String channelName;
+  AddVideoScreen(this.channelID);
+  final String channelID;
   @override
   _AddVideoScreenState createState() => _AddVideoScreenState();
 }
 
 class _AddVideoScreenState extends State<AddVideoScreen> {
-  StorageReference storageReference;
   double _progressValue = 0;
   bool _isUploading = false;
   bool _titleEditEnable = true;
@@ -66,8 +60,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                             SizedBox(
                               width: 20,
                             ),
-                            _AnimatedLiquidLinearProgressIndicator(
-                                _progressValue),
                           ],
                         ),
                         Row(
@@ -102,68 +94,22 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       // setState(() {
                       //   _titleEditEnable = false;
                       // });
-
+                      var uuid = Uuid().v4();
                       File file =
                           await FilePicker.getFile(type: FileType.VIDEO);
-                      print(file.path);
-                      _prevImg = await VideoThumbnail.thumbnailData(
-                        video: file.path,
-                        imageFormat: ImageFormat.JPEG,
-                        maxWidth: 500,
-                        quality: 25,
-                      );
-                      setState(() {});
-                      storageReference = FirebaseStorage().ref().child(
-                          "/videos/${file.path.split('/')[file.path.split('/').length - 1]}");
-                      final StorageUploadTask uploadTask =
-                          storageReference.putData(file.readAsBytesSync());
-
-                      final StreamSubscription<StorageTaskEvent>
-                          streamSubscription =
-                          uploadTask.events.listen((event) {
-                        setState(() {
-                          _isUploading = true;
-
-                          _progressValue =
-                              event.snapshot.bytesTransferred.toDouble() /
-                                  event.snapshot.totalByteCount.toDouble();
-                          print(_progressValue);
-                        });
-                      });
-                      await uploadTask.onComplete;
-                      uploadTask.lastSnapshot.ref
-                          .getDownloadURL()
-                          .then((downloadedURL) {
-                        FirebaseDatabase db =
-                            FirebaseDatabase(app: Resources.firebaseApp);
-                        db
-                            .reference()
-                            .child("videos/")
-                            .child(widget.channelName)
-                            .push()
-                            .set({
-                          "video_name": _txtTitle.text,
-                          "video_url": downloadedURL
-                        });
-                      });
-
-                      // print(downloadedURL);
-
-                      streamSubscription.cancel();
-                      _isUploading = false;
-                      Fluttertoast.showToast(
-                          msg: "Successfully Video Added !",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIos: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      // Navigator.pop(context);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) => VideoListScreen()));
+                      Dio dio = new Dio();
+                      var filename =
+                          "jewtube-_-_-$uuid-_-_-" + (basename(file.path));
+                      var response = await dio.post(
+                          "http://${Resources.BASE_URL}/video/addVideo",
+                          data: {
+                            "file": file.readAsBytesSync(),
+                            "name": filename,
+                            "title": _txtTitle.text,
+                            "videoID": uuid,
+                            "channel": widget.channelID
+                          });
+                      print(response.data);
                     },
                     child: Image.asset(
                       "assets/addVideo.png",
@@ -173,70 +119,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                   ),
                 ),
               ),
-              // Container(
-              //   child: FlatButton(
-              //       onPressed: () async {
-              //         File file = await FilePicker.getFile(type: FileType.VIDEO);
-              //         print(file.path);
-              //         _prevImg = await VideoThumbnail.thumbnailData(
-              //           video: file.path,
-              //           imageFormat: ImageFormat.JPEG,
-              //           maxWidth: 500,
-              //           quality: 25,
-              //         );
-              //         setState(() {});
-              //         storageReference = FirebaseStorage().ref().child(
-              //             "/videos/${file.path.split('/')[file.path.split('/').length - 1]}");
-              //         final StorageUploadTask uploadTask =
-              //             storageReference.putData(file.readAsBytesSync());
-
-              //         final StreamSubscription<StorageTaskEvent>
-              //             streamSubscription = uploadTask.events.listen((event) {
-              //           setState(() {
-              //             _isUploading = true;
-
-              //             _progressValue =
-              //                 event.snapshot.bytesTransferred.toDouble() /
-              //                     event.snapshot.totalByteCount.toDouble();
-              //             print(_progressValue);
-              //           });
-              //         });
-              //         await uploadTask.onComplete;
-              //         uploadTask.lastSnapshot.ref
-              //             .getDownloadURL()
-              //             .then((downloadedURL) {
-              //           FirebaseDatabase db =
-              //               FirebaseDatabase(app: Resources.firebaseApp);
-              //           db
-              //               .reference()
-              //               .child("videos/")
-              //               .child(widget.channelName)
-              //               .push()
-              //               .set({
-              //             "video_name": _txtTitle.text,
-              //             "video_url": downloadedURL
-              //           });
-              //         });
-
-              //         // print(downloadedURL);
-
-              //         streamSubscription.cancel();
-              //         _isUploading = false;
-              //         Fluttertoast.showToast(
-              //             msg: "Successfully Video Added !",
-              //             toastLength: Toast.LENGTH_SHORT,
-              //             gravity: ToastGravity.BOTTOM,
-              //             timeInSecForIos: 1,
-              //             backgroundColor: Colors.red,
-              //             textColor: Colors.white,
-              //             fontSize: 16.0);
-              //         Navigator.pushReplacement(context, MaterialPageRoute(
-              //                                   builder: (builder) =>
-              //                                   VideoListScreen()));
-              //       },
-              //       child: Text("PICK VIDEO")),
-
-              // ),
             ],
           ),
         ),

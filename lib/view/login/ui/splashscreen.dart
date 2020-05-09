@@ -35,7 +35,12 @@ class SplashScreenState extends State<SplashScreen>
       });
       Navigator.of(context).pushReplacementNamed(HOME);
     } else {
-      Navigator.of(context).pushReplacementNamed(SIGN_IN);
+    
+      setState(() {
+        Resources.isAdmin = false;
+        Resources.userID = "";
+      });
+      Navigator.of(context).pushReplacementNamed(HOME);
     }
   }
 

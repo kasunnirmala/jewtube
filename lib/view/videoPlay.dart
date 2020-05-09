@@ -1,5 +1,5 @@
 import 'package:animated_card/animated_card.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jewtube/model/video.dart';
@@ -18,96 +18,52 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
   List subList = List();
   List<VideoModel> _videoList = List();
 
-  getAllVideos(DataSnapshot snapshot) {
+  getAllVideos() async {
+    Response sub = await Dio()
+        .get("http://${Resources.BASE_URL}/subscribe/${Resources.userID}");
+    print(sub.data);
+    var subArray = List();
+    if (sub.data != null) {
+      subArray = sub.data['channel'];
+    }
+    Response response =
+        await Dio().get("http://${Resources.BASE_URL}/video/getvideos");
+    print(response.data);
     setState(() {
       _videoList.clear();
-
-      snapshot.value.forEach((channelID, value) {
-        value.forEach((videoId, value) {
-          _videoList.add(VideoModel(
-              videoId: videoId,
-              channelName: channelID,
-              videoTitle: value['video_name'],
-              videoURL: value['video_url']));
-        });
+      response.data.forEach((video) {
+        _videoList.add(
+          VideoModel(
+               channelID:video['channelID'],
+              channelName: video['channelName'],
+              channelImage: video['channelImage'],
+              videoTitle: video['videoTitle'],
+              videoURL: video['videoURL'],
+              videoId: video['videoId'],
+              sub: video['channelID'] == ""
+                  ? false
+                  : subArray.contains(video['channelID']),
+              thumbNail:
+                  video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""),
+        );
       });
-    });
-  }
 
-  getSubscription() {
-    db
-        .reference()
-        .child("user_subs")
-        .child(Resources.userID)
-        .once()
-        .then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        if (snapshot.value.contains(widget.videoModel.channelName)) {
-          subList.clear();
-          setState(() {
-            subList.addAll(snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
-        } else {
-          setState(() {
-            subList.clear();
-            subList.addAll(snapshot.value);
-            widget.videoModel.sub = false;
-          });
-        }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
-      }
-    });
-  }
-
-  void setUpdate() {
-    db.reference().child("user_subs").onChildChanged.listen((Event event) {
-      if (event.snapshot.value != null) {
-        if (event.snapshot.value.contains(widget.videoModel.channelName)) {
-          subList.clear();
-          setState(() {
-            subList.addAll(event.snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
-        } else {
-          setState(() {
-            subList.clear();
-            subList.addAll(event.snapshot.value);
-            widget.videoModel.sub = false;
-          });
-        }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
-      }
+      // print(jsonEncode(_videoList));
+      // _progress = false;
     });
   }
 
   @override
   void initState() {
-    db.reference().child("videos").once().then((DataSnapshot snapshot) {
-      getAllVideos(snapshot);
-    });
+    getAllVideos();
 
     super.initState();
-    getSubscription();
-    setUpdate();
+
     _videoPlayerController =
         VideoPlayerController.network(widget.videoModel.videoURL);
 
@@ -159,34 +115,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     ),
                     SubscribeWidget(
                       widget.videoModel.sub,
-                      onClick: (status) {
-                        print(status);
-                        setState(() {
-                          print("PPPPPPPPPPPPP" + subList.toString());
-                          print(widget.videoModel.channelName);
-                          if (status) {
-                            subList.add(widget.videoModel.channelName);
-                          } else {
-                            subList.remove(widget.videoModel.channelName);
-                          }
+                   onClick: (status) async {
+                            Response response = await Dio().post(
+                                "http://${Resources.BASE_URL}/subscribe/add",
+                                data: {
+                                  "userID": Resources.userID,
+                                  "ChannelID": widget.videoModel.channelID
+                                });
 
-                          db
-                              .reference()
-                              .child("user_subs")
-                              .child(Resources.userID)
-                              .set(subList);
-                        });
-                      },
+                            setState(() {
+                              widget.videoModel.sub = status;
+                            });
+                          },
                     )
                   ],
                 ),
               ),
               Container(
-                height: height - ((height * 0.15) + width * 2/3),
+                height: height - ((height * 0.15) + width * 2 / 3),
                 width: width,
                 child: SingleChildScrollView(
                   child: Container(
-                    height: height - ((height * 0.15) + width *2/3),
+                    height: height - ((height * 0.15) + width * 2 / 3),
                     width: width,
                     child: ListView.builder(
                         itemCount: _videoList.length,

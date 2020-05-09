@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
+import 'package:flutter/services.dart';
 import 'package:jewtube/util/Resources.dart';
+import 'package:jewtube/view/add_video.dart';
 import 'package:jewtube/view/home.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
 import 'package:jewtube/view/login/ui/signin.dart';
@@ -33,10 +35,14 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     return MaterialApp(
       title: 'JewTube',
       // home: SafeArea(
-      //   child: HomeScreen(),
+      //   child: AddVideoScreen("channel"),
       // ),
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
@@ -45,7 +51,7 @@ class MyApp extends StatelessWidget {
         SIGN_UP: (BuildContext context) => SignUpScreen(),
         HOME: (BuildContext context) => HomeScreen(),
       },
-      initialRoute: SPLASH_SCREEN,
+      initialRoute: HOME,
     );
   }
 }

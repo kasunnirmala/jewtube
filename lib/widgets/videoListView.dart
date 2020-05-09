@@ -18,32 +18,34 @@ class _VideoListViewWidgetState extends State<VideoListViewWidget> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
-      child: Container(
-        height: height * 0.9,
-        width: width,
-        child: ListView.builder(
-            itemCount: widget.videos.length,
-            itemBuilder: (context, index) {
-              return AnimatedCard(
-                  direction: AnimatedCardDirection.left,
-                  initDelay: Duration(milliseconds: 0),
-                  duration: Duration(seconds: 1),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                      elevation: 5,
-                      child:
-                          VideoItemWidgetHorizontal(widget.videos[index], () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (builder) =>
-                                    VideoPlayerScreen(widget.videos[index])));
-                      }),
-                    ),
-                  ));
-            }),
-      ),
+      child: widget.videos.length > 0
+          ? Container(
+              height: height * 0.9,
+              width: width,
+              child: ListView.builder(
+                  itemCount: widget.videos.length,
+                  itemBuilder: (context, index) {
+                    return AnimatedCard(
+                        direction: AnimatedCardDirection.left,
+                        initDelay: Duration(milliseconds: 0),
+                        duration: Duration(seconds: 1),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Card(
+                            elevation: 5,
+                            child: VideoItemWidgetHorizontal(
+                                widget.videos[index], () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (builder) => VideoPlayerScreen(
+                                          widget.videos[index])));
+                            }),
+                          ),
+                        ));
+                  }),
+            )
+          : Text("No Video Found"),
     );
   }
 }

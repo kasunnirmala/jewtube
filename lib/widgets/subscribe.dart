@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jewtube/util/Resources.dart';
+import 'package:jewtube/view/login/constants/constants.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class SubscribeWidget extends StatefulWidget {
   SubscribeWidget(this.status,
@@ -30,11 +33,51 @@ class _SubscribeWidgetState extends State<SubscribeWidget> {
       padding: const EdgeInsets.all(2.0),
       child: RaisedButton(
         onPressed: () {
-          setState(() {
-            widget.status = !widget.status;
-            print(widget.status);
-            widget.onClick(widget.status);
-          });
+          if (Resources.userID != "") {
+            setState(() {
+              widget.status = !widget.status;
+              print(widget.status);
+              widget.onClick(widget.status);
+            });
+          } else {
+            Alert(
+              closeFunction: () {},
+              context: context,
+              style: AlertStyle(
+                animationType: AnimationType.fromTop,
+                isCloseButton: true,
+                isOverlayTapDismiss: false,
+                descStyle: TextStyle(fontWeight: FontWeight.bold),
+                animationDuration: Duration(milliseconds: 400),
+                alertBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(
+                    color: Colors.grey,
+                  ),
+                ),
+                titleStyle: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              type: AlertType.info,
+              title: "LOGIN",
+              desc: "You need to login to enable these features.",
+              buttons: [
+                DialogButton(
+                  child: Text(
+                    "LOGIN",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, SIGN_IN);
+                  },
+                  color: Color.fromRGBO(0, 179, 134, 1.0),
+                  radius: BorderRadius.circular(0.0),
+                ),
+              ],
+            ).show();
+          }
         },
         child: Text(
           "SUBSCRIBE",

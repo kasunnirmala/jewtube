@@ -1,4 +1,5 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jewtube/model/video.dart';
 import 'package:jewtube/util/Resources.dart';
@@ -15,95 +16,10 @@ class VideoItemWidgetHorizontal extends StatefulWidget {
 }
 
 class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
-  var _thumbImage;
   bool _progress = true;
-  final FirebaseDatabase db = FirebaseDatabase(app: Resources.firebaseApp);
-  getImageThumb() async {
-    _thumbImage = await VideoThumbnail.thumbnailData(
-      video: widget.videoModel.videoURL,
-      imageFormat: ImageFormat.JPEG,
-      maxHeight: 500,
-      quality: 25,
-    );
-    if (this.mounted) {
-      setState(() {
-        _progress = false;
-      });
-    }
-  }
-
-  List subList = List();
-
-  getSubscription() {
-    db
-        .reference()
-        .child("user_subs")
-        .child(Resources.userID)
-        .once()
-        .then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        if (snapshot.value.contains(widget.videoModel.channelName)) {
-          subList.clear();
-          if (this.mounted) {
-            setState(() {
-              subList.addAll(snapshot.value);
-              print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                  subList.toString());
-              widget.videoModel.sub = true;
-            });
-          }
-        } else {
-          if (this.mounted) {
-            setState(() {
-              subList.clear();
-              subList.addAll(snapshot.value);
-              widget.videoModel.sub = false;
-            });
-          }
-        }
-      } else {
-        if (this.mounted) {
-          setState(() {
-            subList.clear();
-            widget.videoModel.sub = false;
-          });
-        }
-      }
-    });
-  }
-
-  void setUpdate() {
-    db.reference().child("user_subs").onChildChanged.listen((Event event) {
-      if (event.snapshot.value != null) {
-        if (event.snapshot.value.contains(widget.videoModel.channelName)) {
-          subList.clear();
-          setState(() {
-            subList.addAll(event.snapshot.value);
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                subList.toString());
-            widget.videoModel.sub = true;
-          });
-        } else {
-          setState(() {
-            subList.clear();
-            subList.addAll(event.snapshot.value);
-            widget.videoModel.sub = false;
-          });
-        }
-      } else {
-        setState(() {
-          subList.clear();
-          widget.videoModel.sub = false;
-        });
-      }
-    });
-  }
 
   @override
   void initState() {
-    getImageThumb();
-    getSubscription();
-    setUpdate();
     super.initState();
   }
 
@@ -119,15 +35,26 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
             _progress
                 ? Center(child: CircularProgressIndicator())
                 : GestureDetector(
-                    child: Image.memory(
-                      _thumbImage,
-                      height: height * 0.1,
-                      width: width * 0.3,
+                    //   child: Image.network(
+                    // widget.videoModel.thumbNail,
+                    //     height: height * 0.1,
+                    //     width: width * 0.3,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    //   onTap: () {
+                    //     widget.onClick();
+                    //   },
+                    child: CachedNetworkImage(
                       fit: BoxFit.cover,
+                      height: height * 0.25,
+                      width: width,
+                      imageUrl: widget.videoModel.thumbNail,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    onTap: () {
-                      widget.onClick();
-                    },
                   ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -148,22 +75,16 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
                     ),
                     SubscribeWidget(
                       widget.videoModel.sub,
-                      onClick: (status) {
-                        print(status);
-                        setState(() {
-                          print("PPPPPPPPPPPPP" + subList.toString());
-                          print(widget.videoModel.channelName);
-                          if (status) {
-                            subList.add(widget.videoModel.channelName);
-                          } else {
-                            subList.remove(widget.videoModel.channelName);
-                          }
+                      onClick: (status) async {
+                        Response response = await Dio().post(
+                            "http://${Resources.BASE_URL}/subscribe/add",
+                            data: {
+                              "userID": Resources.userID,
+                              "ChannelID": widget.videoModel.channelID
+                            });
 
-                          db
-                              .reference()
-                              .child("user_subs")
-                              .child(Resources.userID)
-                              .set(subList);
+                        setState(() {
+                          widget.videoModel.sub = status;
                         });
                       },
                     )
