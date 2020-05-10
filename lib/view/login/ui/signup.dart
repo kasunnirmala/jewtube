@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jewtube/view/login/ui/widgets/responsive_ui.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
 import 'package:jewtube/view/login/ui/widgets/custom_shape.dart';
@@ -139,44 +139,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
           )
                   .catchError((onError) {
             print(onError.message);
-            // Fluttertoast.showToast(
-            //     msg: onError.message,
-            //     toastLength: Toast.LENGTH_SHORT,
-            //     gravity: ToastGravity.BOTTOM,
-            //     backgroundColor: Colors.grey,
-            //     textColor: Colors.white,
-            //     fontSize: 16.0);
+            Fluttertoast.showToast(
+                msg: onError.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
           }))
               .user;
 
           print("DDDDDDDDDDDDDDDDDDDDDDDDDDDD   : " + user.toString());
           if (user != null) {
-            // Fluttertoast.showToast(
-            //     msg: "Signup Success",
-            //     toastLength: Toast.LENGTH_SHORT,
-            //     gravity: ToastGravity.BOTTOM,
-            //     backgroundColor: Colors.grey,
-            //     textColor: Colors.white,
-            //     fontSize: 16.0);
+            Fluttertoast.showToast(
+                msg: "Signup Success",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
 
             Navigator.of(context).pushReplacementNamed(SIGN_IN);
           } else {
-            // Fluttertoast.showToast(
-            //     msg: "Error in Signup",
-            //     toastLength: Toast.LENGTH_SHORT,
-            //     gravity: ToastGravity.BOTTOM,
-            //     backgroundColor: Colors.grey,
-            //     textColor: Colors.white,
-            //     fontSize: 16.0);
+            Fluttertoast.showToast(
+                msg: "Error in Signup",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
           }
         } else {
-          // Fluttertoast.showToast(
-          //     msg: "Please fill All fields to continue",
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.BOTTOM,
-          //     backgroundColor: Colors.grey,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
+          Fluttertoast.showToast(
+              msg: "Please fill All fields to continue",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.grey,
+              textColor: Colors.white,
+              fontSize: 16.0);
         }
 
         // Navigator.pop(context);

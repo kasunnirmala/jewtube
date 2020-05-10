@@ -34,15 +34,7 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
             _progress
                 ? Center(child: CircularProgressIndicator())
                 : GestureDetector(
-                    //   child: Image.network(
-                    // widget.videoModel.thumbNail,
-                    //     height: height * 0.1,
-                    //     width: width * 0.3,
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    //   onTap: () {
-                    //     widget.onClick();
-                    //   },
+                  
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
                       height: height * 0.25,
