@@ -6,8 +6,9 @@ import 'package:jewtube/view/videoPlay.dart';
 import 'package:jewtube/widgets/videoItemWidgetHorizontal.dart';
 
 class VideoListViewWidget extends StatefulWidget {
-  VideoListViewWidget(this.videos);
+  VideoListViewWidget(this.videos, this.onRefresh);
   final List<VideoModel> videos;
+  RefreshCallback onRefresh;
   @override
   _VideoListViewWidgetState createState() => _VideoListViewWidgetState();
 }
@@ -22,28 +23,31 @@ class _VideoListViewWidgetState extends State<VideoListViewWidget> {
           ? Container(
               height: height * 0.9,
               width: width,
-              child: ListView.builder(
-                  itemCount: widget.videos.length,
-                  itemBuilder: (context, index) {
-                    return AnimatedCard(
-                        direction: AnimatedCardDirection.left,
-                        initDelay: Duration(milliseconds: 0),
-                        duration: Duration(seconds: 1),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Card(
-                            elevation: 5,
-                            child: VideoItemWidgetHorizontal(
-                                widget.videos[index], () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (builder) => VideoPlayerScreen(
-                                          widget.videos[index])));
-                            }),
-                          ),
-                        ));
-                  }),
+              child: RefreshIndicator(
+                onRefresh: widget.onRefresh,
+                child: ListView.builder(
+                    itemCount: widget.videos.length,
+                    itemBuilder: (context, index) {
+                      return AnimatedCard(
+                          direction: AnimatedCardDirection.left,
+                          initDelay: Duration(milliseconds: 0),
+                          duration: Duration(seconds: 1),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Card(
+                              elevation: 5,
+                              child: VideoItemWidgetHorizontal(
+                                  widget.videos[index], () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (builder) => VideoPlayerScreen(
+                                            widget.videos[index])));
+                              }),
+                            ),
+                          ));
+                    }),
+              ),
             )
           : Text("No Video Found"),
     );

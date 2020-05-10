@@ -18,41 +18,48 @@ class _ChannelVideoListState extends State<ChannelVideoList> {
   bool _progress = true;
   @override
   void initState() {
-  
+    getAllVideos();
     super.initState();
   }
 
-  getAllVideos(String channelID) async {
-      Response sub = await Dio()
+
+   Future<Null>  getAllVideos() async {
+    Response sub = await Dio()
         .get("http://${Resources.BASE_URL}/subscribe/${Resources.userID}");
     print(sub.data);
     var subArray = List();
     if (sub.data != null) {
-       subArray = sub.data['channel'];
+      subArray = sub.data['channel'];
     }
-    Response response = await Dio()
-        .get("http://${Resources.BASE_URL}/video/getvideos/ByChannel/$channelID");
+    Response response = await Dio().get(
+        "http://${Resources.BASE_URL}/video/getvideos/ByChannel/${widget.channelID}");
     print(response.data);
-    setState(() {
-      _videoList.clear();
-      response.data.forEach((video) {
-        _videoList.add(VideoModel(
-          channelID:video['channelID'],
-            channelName: video['channelName'],
-            channelImage: video['channelImage'],
-            videoTitle: video['videoTitle'],
-            videoURL: video['videoURL'],
-            videoId: video['videoId'],
-             sub: video['channelID'] == ""
+    if (sub.data != null && response.data != null) {
+      setState(() {
+        _videoList.clear();
+        response.data.forEach((video) {
+          _videoList.add(VideoModel(
+              channelID: video['channelID'],
+              channelName: video['channelName'],
+              channelImage: video['channelImage'],
+              videoTitle: video['videoTitle'],
+              videoURL: video['videoURL'],
+              videoId: video['videoId'],
+              sub: video['channelID'] == ""
                   ? false
                   : subArray.contains(video['channelID']),
-            thumbNail:
-                video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""));
-      });
+              thumbNail:
+                  video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""));
+        });
 
-      print(jsonEncode(_videoList));
-      _progress = false;
-    });
+        print(jsonEncode(_videoList));
+        _progress = false;
+      });
+    } else {
+      setState(() {
+        _progress = false;
+      });
+    }
   }
 
   @override
@@ -61,8 +68,8 @@ class _ChannelVideoListState extends State<ChannelVideoList> {
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : Scaffold(
-            body: VideoListViewWidget(_videoList),
-          );
+        : SafeArea(
+            child: Scaffold(
+            body: VideoListViewWidget(_videoList,getAllVideos)));
   }
 }

@@ -40,7 +40,7 @@ class SplashScreenState extends State<SplashScreen>
         Resources.isAdmin = false;
         Resources.userID = "";
       });
-      Navigator.of(context).pushReplacementNamed(HOME);
+      Navigator.of(context).pushReplacementNamed(SIGN_IN);
     }
   }
 

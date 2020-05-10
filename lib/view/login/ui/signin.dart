@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
 import 'package:jewtube/view/login/ui/signup.dart';
@@ -238,7 +239,16 @@ class _SignInScreenState extends State<SignInScreen> {
             final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
               email: emailController.text,
               password: passwordController.text,
-            ))
+            ) .catchError((onError) {
+            print(onError.message);
+            Fluttertoast.showToast(
+                msg: onError.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }))
                 .user;
             if (user != null) {
               SharedPreferences prefs = await SharedPreferences.getInstance();

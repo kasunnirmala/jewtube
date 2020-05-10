@@ -15,6 +15,7 @@ import 'package:jewtube/view/channelVideoList.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
 import 'package:jewtube/view/subVideoList.dart';
 import 'package:jewtube/view/videoList.dart';
+import 'package:path/path.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _progress = true;
   File file;
   String chnlName = "";
+  bool _progressAddChannel = false;
   @override
   void initState() {
     getAllChannels();
@@ -93,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Container()
                               : Container(
                                   child: Center(
-                                    child: Text("No Video To View"),
+                                    child: Text("No Channel To View"),
                                   ),
                                 ),
                           for (var channel in _channelList)
@@ -127,90 +129,87 @@ class _HomeScreenState extends State<HomeScreen> {
                               Alert(
                                   context: context,
                                   title: "ADD A CHANNEL",
-                                  content: StatefulBuilder(
-                                      // You need this, notice the parameters below:
-                                      builder: (BuildContext context,
-                                          StateSetter setState) {
-                                    return Column(
-                                      children: <Widget>[
-                                        Center(
-                                          child: GestureDetector(
-                                            child: CircleAvatar(
-                                              radius: 50,
-                                              backgroundImage: file == null
-                                                  ? AssetImage(
-                                                      "assets/addImg.png")
-                                                  : MemoryImage(
-                                                      file.readAsBytesSync()),
-                                            ),
-                                            onTap: () {
-                                              FilePicker.getFile(
-                                                      type: FileType.IMAGE)
-                                                  .then((value_file) {
-                                                setState(() {
-                                                  file = value_file;
-                                                  print(
-                                                      "PATH   : " + file.path);
-                                                });
-                                              });
+                                  content: _progressAddChannel
+                                      ? Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : StatefulBuilder(
+                                          // You need this, notice the parameters below:
+                                          builder: (BuildContext context,
+                                              StateSetter setState) {
+                                          return Column(
+                                            children: <Widget>[
+                                              Center(
+                                                child: GestureDetector(
+                                                  child: CircleAvatar(
+                                                    radius: 50,
+                                                    backgroundImage: file ==
+                                                            null
+                                                        ? AssetImage(
+                                                            "assets/addImg.png")
+                                                        : MemoryImage(file
+                                                            .readAsBytesSync()),
+                                                  ),
+                                                  onTap: () {
+                                                    FilePicker.getFile(
+                                                            type:
+                                                                FileType.IMAGE)
+                                                        .then((value_file) {
+                                                      setState(() {
+                                                        file = value_file;
+                                                        print("PATH   : " +
+                                                            file.path);
+                                                      });
+                                                    });
 
-                                              //
-                                            },
-                                          ),
-                                        ),
-                                        TextField(
-                                          onChanged: (value) {
-                                            chnlName = value;
-                                          },
-                                          decoration: InputDecoration(
-                                            icon: Icon(Icons.account_circle),
-                                            labelText: 'Channel Name',
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
+                                                    //
+                                                  },
+                                                ),
+                                              ),
+                                              TextField(
+                                                onChanged: (value) {
+                                                  chnlName = value;
+                                                },
+                                                decoration: InputDecoration(
+                                                  icon: Icon(
+                                                      Icons.account_circle),
+                                                  labelText: 'Channel Name',
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
                                   buttons: [
                                     DialogButton(
                                       onPressed: () async {
-                                        // if (file != null) {
-                                        //   StorageReference storageReference =
-                                        //       FirebaseStorage().ref().child(
-                                        //           "/images/${file.path.split('/')[file.path.split('/').length - 1]}");
-                                        //   final StorageUploadTask uploadTask =
-                                        //       storageReference.putFile(file);
-
-                                        //   // final StreamSubscription<StorageTaskEvent>
-                                        //   //     streamSubscription =
-                                        //   //     uploadTask.events.listen((event) {});
-                                        //   await uploadTask.onComplete;
-                                        //   storageReference
-                                        //       .getDownloadURL()
-                                        //       .then((downloadedURL) {
-                                        //     FirebaseDatabase db = FirebaseDatabase(
-                                        //         app: Resources.firebaseApp);
-                                        //     db
-                                        //         .reference()
-                                        //         .child("channels/")
-                                        //         .child(chnlName)
-                                        //         .set({
-                                        //       "Channel_name": chnlName,
-                                        //       "Channel_image": downloadedURL
-                                        //     });
-
-                                        //     Fluttertoast.showToast(
-                                        //         msg: "Successfully Added Channel !",
-                                        //         toastLength: Toast.LENGTH_SHORT,
-                                        //         gravity: ToastGravity.BOTTOM,
-                                        //         timeInSecForIos: 1,
-                                        //         backgroundColor: Colors.red,
-                                        //         textColor: Colors.white,
-                                        //         fontSize: 16.0);
-                                        //     Navigator.pop(context);
-                                        //   });
-                                        // } else {
-                                        //   print("FILE NULL");
-                                        // }
+                                        if (file != null) {
+                                          setState(() {
+                                            _progressAddChannel = true;
+                                          });
+                                          Dio dio = new Dio();
+                                          var filename = (basename(file.path));
+                                          var response = await dio.post(
+                                              "http://${Resources.BASE_URL}/channel/add",
+                                              data: {
+                                                "file": file.readAsBytesSync(),
+                                                "name": filename,
+                                                "title": chnlName,
+                                              });
+                                          print(response.data);
+                                            getAllChannels();
+                                          setState(() {
+                                            _progressAddChannel = false;
+                                          });
+                                        } else {
+                                          print("FILE NULL");
+                                          Fluttertoast.showToast(
+                                              msg: "No File Selected",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.CENTER,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0);
+                                        }
                                       },
                                       child: Text(
                                         "ADD",

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jewtube/util/Resources.dart';
 import 'package:path/path.dart';
 import 'package:dio/dio.dart';
@@ -7,6 +8,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:uuid/uuid.dart';
+
+import 'login/constants/constants.dart';
 
 class AddVideoScreen extends StatefulWidget {
   AddVideoScreen(this.channelID);
@@ -42,42 +45,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
-              _isUploading
-                  ? Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            SizedBox(
-                              width: 20,
-                            ),
-                            _prevImg != null
-                                ? Image.memory(
-                                    _prevImg,
-                                    width: sysWidth * 0.2,
-                                  )
-                                : Container,
-                            SizedBox(
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              _txtTitle.text,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 50,
-                        ),
-                      ],
-                    )
-                  : Container(),
               TextField(
                 enabled: _titleEditEnable,
                 controller: _txtTitle,
@@ -86,39 +53,79 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
               SizedBox(
                 height: 50,
               ),
-              Container(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () async {
-                      // setState(() {
-                      //   _titleEditEnable = false;
-                      // });
-                      var uuid = Uuid().v4();
-                      File file =
-                          await FilePicker.getFile(type: FileType.VIDEO);
-                      Dio dio = new Dio();
-                      var filename =
-                          "jewtube-_-_-$uuid-_-_-" + (basename(file.path));
-                      var response = await dio.post(
-                          "http://${Resources.BASE_URL}/video/addVideo",
-                          data: {
-                            "file": file.readAsBytesSync(),
-                            "name": filename,
-                            "title": _txtTitle.text,
-                            "videoID": uuid,
-                            "channel": widget.channelID
-                          });
-                      print(response.data);
-                    },
-                    child: Image.asset(
-                      "assets/addVideo.png",
-                      width: sysWidth * 0.8,
-                      fit: BoxFit.cover,
+              _isUploading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            var uuid = Uuid().v4();
+                            File file =
+                                await FilePicker.getFile(type: FileType.VIDEO);
+                            if (file != null) {
+                              Dio dio = new Dio();
+                              var filename = "jewtube-_-_-$uuid-_-_-" +
+                                  (basename(file.path));
+                              setState(() {
+                                _titleEditEnable = false;
+                                _isUploading = true;
+                              });
+                              var response = await dio.post(
+                                  "http://${Resources.BASE_URL}/video/addVideo",
+                                  data: {
+                                    "file": file.readAsBytesSync(),
+                                    "name": filename,
+                                    "title": _txtTitle.text,
+                                    "videoID": uuid,
+                                    "channel": widget.channelID
+                                  });
+                              print(response.data);
+                              setState(() {
+                                _isUploading = false;
+                              });
+                              if (response != null &&
+                                  response.data != null &&
+                                  response.data['status'] == 200) {
+                                Fluttertoast.showToast(
+                                    msg: "Upload Completed",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.grey,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+
+                                Navigator.of(context)
+                                    .pushReplacementNamed(HOME);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Upload Error",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "No Video Selected",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
+                          },
+                          child: Image.asset(
+                            "assets/addVideo.png",
+                            width: sysWidth * 0.8,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

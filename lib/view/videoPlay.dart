@@ -34,12 +34,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     Response response =
         await Dio().get("http://${Resources.BASE_URL}/video/getvideos");
     print(response.data);
-    setState(() {
-      _videoList.clear();
-      response.data.forEach((video) {
-        _videoList.add(
-          VideoModel(
-               channelID:video['channelID'],
+    if (sub.data != null && response.data != null) {
+      setState(() {
+        _videoList.clear();
+        response.data.forEach((video) {
+          _videoList.add(VideoModel(
+              channelID: video['channelID'],
               channelName: video['channelName'],
               channelImage: video['channelImage'],
               videoTitle: video['videoTitle'],
@@ -49,13 +49,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   ? false
                   : subArray.contains(video['channelID']),
               thumbNail:
-                  video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""),
-        );
+                  video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""));
+        });
       });
-
-      // print(jsonEncode(_videoList));
-      // _progress = false;
-    });
+    }
   }
 
   @override
@@ -115,18 +112,18 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     ),
                     SubscribeWidget(
                       widget.videoModel.sub,
-                   onClick: (status) async {
-                            Response response = await Dio().post(
-                                "http://${Resources.BASE_URL}/subscribe/add",
-                                data: {
-                                  "userID": Resources.userID,
-                                  "ChannelID": widget.videoModel.channelID
-                                });
-
-                            setState(() {
-                              widget.videoModel.sub = status;
+                      onClick: (status) async {
+                        Response response = await Dio().post(
+                            "http://${Resources.BASE_URL}/subscribe/add",
+                            data: {
+                              "userID": Resources.userID,
+                              "ChannelID": widget.videoModel.channelID
                             });
-                          },
+
+                        setState(() {
+                          widget.videoModel.sub = status;
+                        });
+                      },
                     )
                   ],
                 ),

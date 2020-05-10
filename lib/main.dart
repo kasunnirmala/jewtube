@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         SIGN_UP: (BuildContext context) => SignUpScreen(),
         HOME: (BuildContext context) => HomeScreen(),
       },
-      initialRoute: HOME,
+      initialRoute: SPLASH_SCREEN,
     );
   }
 }

@@ -68,7 +68,8 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
                           child: CircleAvatar(
                             radius: 30,
                             backgroundImage:
-                                widget.videoModel.channelImage == ""
+                                widget.videoModel.channelImage == "" ||
+                                        widget.videoModel.channelImage == null
                                     ? AssetImage("assets/no_image.png")
                                     : CachedNetworkImageProvider(
                                         widget.videoModel.channelImage),

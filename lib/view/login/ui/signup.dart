@@ -132,10 +132,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _emailController != "" &&
             _passwordController != "") {
           final FirebaseAuth _auth = FirebaseAuth.instance;
-          final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+          final FirebaseUser user = (await _auth
+                  .createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
-          ))
+          )
+                  .catchError((onError) {
+            print(onError.message);
+            Fluttertoast.showToast(
+                msg: onError.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }))
               .user;
 
           print("DDDDDDDDDDDDDDDDDDDDDDDDDDDD   : " + user.toString());
@@ -144,7 +155,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 msg: "Signup Success",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
-                timeInSecForIos: 1,
                 backgroundColor: Colors.grey,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -155,7 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 msg: "Error in Signup",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
-                timeInSecForIos: 1,
                 backgroundColor: Colors.grey,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -165,7 +174,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               msg: "Please fill All fields to continue",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 1,
               backgroundColor: Colors.grey,
               textColor: Colors.white,
               fontSize: 16.0);

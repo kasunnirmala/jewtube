@@ -14,35 +14,48 @@ class SubedVideoList extends StatefulWidget {
 class _SubedVideoListState extends State<SubedVideoList> {
   List<VideoModel> _videoList = List();
   bool _progress = true;
-  getAllVideos() async {
+ Future<Null>  getAllVideos() async {
     Response sub = await Dio()
         .get("http://${Resources.BASE_URL}/subscribe/${Resources.userID}");
     print(sub.data);
     var subArray = List();
     if (sub.data != null) {
-        subArray = sub.data['channel'];
+      subArray = sub.data['channel'];
     }
     if (subArray.length > 0) {
       Response response = await Dio().get(
           "http://${Resources.BASE_URL}/video/getvideos//ByChannelArray",
           queryParameters: {"channelIDs": subArray});
       print(response.data);
-      setState(() {
-        _videoList.clear();
-        response.data.forEach((video) {
-          _videoList.add(VideoModel(
-               channelID:video['channelID'],
-              channelName: video['channelName'],
-              channelImage: video['channelImage'],
-              videoTitle: video['videoTitle'],
-              videoURL: video['videoURL'],
-              videoId: video['videoId'],
-              sub: video['channelID'] == ""
-                  ? false
-                  : subArray.contains(video['channelID']),
-              thumbNail:
-                  video['thumbNail'].length > 0 ? video['thumbNail'][0] : ""));
+      if (sub.data != null && response.data != null) {
+        setState(() {
+          _videoList.clear();
+          response.data.forEach((video) {
+            _videoList.add(VideoModel(
+                channelID: video['channelID'],
+                channelName: video['channelName'],
+                channelImage: video['channelImage'],
+                videoTitle: video['videoTitle'],
+                videoURL: video['videoURL'],
+                videoId: video['videoId'],
+                sub: video['channelID'] == ""
+                    ? false
+                    : subArray.contains(video['channelID']),
+                thumbNail: video['thumbNail'].length > 0
+                    ? video['thumbNail'][0]
+                    : ""));
+          });
+
+          // print(jsonEncode(_videoList));
+          _progress = false;
         });
+      } else {
+        setState(() {
+          _progress = false;
+        });
+      }
+    } else {
+      setState(() {
         _progress = false;
       });
     }
@@ -51,6 +64,7 @@ class _SubedVideoListState extends State<SubedVideoList> {
   @override
   void initState() {
     if (Resources.userID != "") {
+      getAllVideos();
     } else {
       Alert(
         closeFunction: () {},
@@ -99,6 +113,6 @@ class _SubedVideoListState extends State<SubedVideoList> {
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : VideoListViewWidget(_videoList);
+        : VideoListViewWidget(_videoList,getAllVideos);
   }
 }
