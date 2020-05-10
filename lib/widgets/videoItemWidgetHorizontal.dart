@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:jewtube/model/video.dart';
 import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/widgets/subscribe.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoItemWidgetHorizontal extends StatefulWidget {
   VideoItemWidgetHorizontal(this.videoModel, this.onClick);

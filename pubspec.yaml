@@ -26,10 +26,9 @@ dependencies:
   bmnav: ^0.3.4
   firebase_core: ^0.4.0+9
   firebase_auth: ^0.15.5+2
-  fluttertoast: ^4.0.0
+  # fluttertoast: ^4.0.0
   font_awesome_flutter: ^8.7.0
   animated_card: ^1.0.0+8
-  video_thumbnail: ^0.2.0
   chewie: ^0.9.10
   video_player: ^0.10.8+1
   file_picker: ^1.4.2
@@ -37,7 +36,6 @@ dependencies:
   liquid_progress_indicator: ^0.3.2
   shared_preferences: ^0.5.6+3
   cached_network_image: ^2.2.0+1
-  flutter_advanced_networkimage: ^0.7.0
   uuid: 2.0.4
   dio: 3.0.9
   path: 

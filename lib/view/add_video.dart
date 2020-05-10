@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jewtube/util/Resources.dart';
 import 'package:path/path.dart';
 import 'package:dio/dio.dart';
@@ -89,33 +89,33 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                               if (response != null &&
                                   response.data != null &&
                                   response.data['status'] == 200) {
-                                Fluttertoast.showToast(
-                                    msg: "Upload Completed",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    backgroundColor: Colors.grey,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
+                                // Fluttertoast.showToast(
+                                //     msg: "Upload Completed",
+                                //     toastLength: Toast.LENGTH_SHORT,
+                                //     gravity: ToastGravity.BOTTOM,
+                                //     backgroundColor: Colors.grey,
+                                //     textColor: Colors.white,
+                                //     fontSize: 16.0);
 
                                 Navigator.of(context)
                                     .pushReplacementNamed(HOME);
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: "Upload Error",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
+                                // Fluttertoast.showToast(
+                                //     msg: "Upload Error",
+                                //     toastLength: Toast.LENGTH_SHORT,
+                                //     gravity: ToastGravity.BOTTOM,
+                                //     backgroundColor: Colors.red,
+                                //     textColor: Colors.white,
+                                //     fontSize: 16.0);
                               }
                             } else {
-                              Fluttertoast.showToast(
-                                  msg: "No Video Selected",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0);
+                              // Fluttertoast.showToast(
+                              //     msg: "No Video Selected",
+                              //     toastLength: Toast.LENGTH_SHORT,
+                              //     gravity: ToastGravity.BOTTOM,
+                              //     backgroundColor: Colors.red,
+                              //     textColor: Colors.white,
+                              //     fontSize: 16.0);
                             }
                           },
                           child: Image.asset(
