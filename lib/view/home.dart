@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Fluttertoast.showToast(
                                               msg: "No File Selected",
                                               toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.CENTER,
+                                              gravity: ToastGravity.CENTER,timeInSecForIos: 1,
                                               backgroundColor: Colors.red,
                                               textColor: Colors.white,
                                               fontSize: 16.0);

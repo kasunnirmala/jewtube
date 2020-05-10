@@ -93,7 +93,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                     msg: "Upload Completed",
                                     toastLength: Toast.LENGTH_SHORT,
                                     gravity: ToastGravity.BOTTOM,
-                                    backgroundColor: Colors.grey,
+                                    backgroundColor: Colors.grey,timeInSecForIos: 1,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
 
@@ -103,7 +103,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                 Fluttertoast.showToast(
                                     msg: "Upload Error",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
+                                    gravity: ToastGravity.BOTTOM,timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
@@ -112,7 +112,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                               Fluttertoast.showToast(
                                   msg: "No Video Selected",
                                   toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
+                                  gravity: ToastGravity.BOTTOM,timeInSecForIos: 1,
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
                                   fontSize: 16.0);

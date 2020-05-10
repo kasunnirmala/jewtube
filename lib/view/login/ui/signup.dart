@@ -142,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Fluttertoast.showToast(
                 msg: onError.message,
                 toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
+                gravity: ToastGravity.BOTTOM,timeInSecForIos: 1,
                 backgroundColor: Colors.grey,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -155,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 msg: "Signup Success",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.grey,timeInSecForIos: 1,
                 textColor: Colors.white,
                 fontSize: 16.0);
 
@@ -165,7 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 msg: "Error in Signup",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.grey,timeInSecForIos: 1,
                 textColor: Colors.white,
                 fontSize: 16.0);
           }
@@ -174,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               msg: "Please fill All fields to continue",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.grey,timeInSecForIos: 1,
               textColor: Colors.white,
               fontSize: 16.0);
         }

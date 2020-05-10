@@ -244,7 +244,7 @@ class _SignInScreenState extends State<SignInScreen> {
             Fluttertoast.showToast(
                 msg: onError.message,
                 toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
+                gravity: ToastGravity.BOTTOM,timeInSecForIos: 1,
                 backgroundColor: Colors.grey,
                 textColor: Colors.white,
                 fontSize: 16.0);
