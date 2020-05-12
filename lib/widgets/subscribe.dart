@@ -83,7 +83,7 @@ class _SubscribeWidgetState extends State<SubscribeWidget> {
           "SUBSCRIBE",
           style: TextStyle(color: clr),
         ),
-        color: Colors.white,
+        color: Colors.transparent,
         shape: RoundedRectangleBorder(side: BorderSide(color: clr, width: 1)),
       ),
     );

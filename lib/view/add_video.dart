@@ -12,8 +12,8 @@ import 'package:uuid/uuid.dart';
 import 'login/constants/constants.dart';
 
 class AddVideoScreen extends StatefulWidget {
-  AddVideoScreen(this.channelID);
-  final String channelID;
+  // AddVideoScreen(this.channelID,);
+  // final String channelID;
   @override
   _AddVideoScreenState createState() => _AddVideoScreenState();
 }
@@ -24,6 +24,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
   bool _titleEditEnable = true;
   TextEditingController _txtTitle = TextEditingController();
   var _prevImg;
+  bool init=false;
   // Alert _alert;
   @override
   void initState() {
@@ -33,6 +34,12 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String channelID = ModalRoute.of(context).settings.arguments;
+    if (!init) {
+    
+      init = true;
+    }
+
     var sysWidth = MediaQuery.of(context).size.width;
     var sysHeight = MediaQuery.of(context).size.height;
     return SafeArea(
@@ -80,7 +87,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                     "name": filename,
                                     "title": _txtTitle.text,
                                     "videoID": uuid,
-                                    "channel": widget.channelID
+                                    "channel":channelID
                                   });
                               print(response.data);
                               setState(() {
@@ -96,7 +103,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                     backgroundColor: Colors.grey,timeInSecForIos: 1,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
-
                                 Navigator.of(context)
                                     .pushReplacementNamed(HOME);
                               } else {

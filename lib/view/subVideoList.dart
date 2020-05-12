@@ -1,10 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:jewtube/model/channel.dart';
 import 'package:jewtube/model/video.dart';
 import 'package:jewtube/util/Resources.dart';
+import 'package:jewtube/util/utils.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
 import 'package:jewtube/widgets/videoListView.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:bmnav/bmnav.dart' as bmnav;
 
 class SubedVideoList extends StatefulWidget {
   @override
@@ -13,106 +18,147 @@ class SubedVideoList extends StatefulWidget {
 
 class _SubedVideoListState extends State<SubedVideoList> {
   List<VideoModel> _videoList = List();
+  List<Channel> _channelList = List();
   bool _progress = true;
- Future<Null>  getAllVideos() async {
-    Response sub = await Dio()
-        .get("http://${Resources.BASE_URL}/subscribe/${Resources.userID}");
-    print(sub.data);
-    var subArray = List();
-    if (sub.data != null) {
-      subArray = sub.data['channel'];
-    }
-    if (subArray.length > 0) {
-      Response response = await Dio().get(
-          "http://${Resources.BASE_URL}/video/getvideos//ByChannelArray",
-          queryParameters: {"channelIDs": subArray});
-      print(response.data);
-      if (sub.data != null && response.data != null) {
-        setState(() {
-          _videoList.clear();
-          response.data.forEach((video) {
-            _videoList.add(VideoModel(
-                channelID: video['channelID'],
-                channelName: video['channelName'],
-                channelImage: video['channelImage'],
-                videoTitle: video['videoTitle'],
-                videoURL: video['videoURL'],
-                videoId: video['videoId'],
-                sub: video['channelID'] == ""
-                    ? false
-                    : subArray.contains(video['channelID']),
-                thumbNail: video['thumbNail'].length > 0
-                    ? video['thumbNail'][0]
-                    : ""));
-          });
+  bool init = false;
+  String text = "No Subscriptions";
 
-          // print(jsonEncode(_videoList));
-          _progress = false;
-        });
-      } else {
-        setState(() {
-          _progress = false;
-        });
-      }
-    } else {
-      setState(() {
-        _progress = false;
-      });
-    }
+  Future<Null> getAllVideos() async {
+    await getVideos(
+            "http://${Resources.BASE_URL}/video/getvideos/ByChannelArray",
+            needSubsInQuery: true)
+        .then((value) => {
+              setState(() {
+                _videoList.clear();
+                _videoList = value['videos'];
+                _channelList = value['channels'];
+                // print(jsonEncode(_videoList));
+                _progress = false;
+              })
+            });
   }
 
   @override
   void initState() {
-    if (Resources.userID != "") {
-      getAllVideos();
-    } else {
-      Alert(
-        closeFunction: () {},
-        context: context,
-        style: AlertStyle(
-          animationType: AnimationType.fromTop,
-          isCloseButton: false,
-          isOverlayTapDismiss: false,
-          descStyle: TextStyle(fontWeight: FontWeight.bold),
-          animationDuration: Duration(milliseconds: 400),
-          alertBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-            side: BorderSide(
-              color: Colors.grey,
-            ),
-          ),
-          titleStyle: TextStyle(
-            color: Colors.red,
-          ),
-        ),
-        type: AlertType.info,
-        title: "LOGIN",
-        desc: "You need to login to enable these features.",
-        buttons: [
-          DialogButton(
-            child: Text(
-              "LOGIN",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, SIGN_IN);
-            },
-            color: Color.fromRGBO(0, 179, 134, 1.0),
-            radius: BorderRadius.circular(0.0),
-          ),
-        ],
-      ).show();
-    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    double height =
+        (MediaQuery.of(context).size.height) - AppBar().preferredSize.height;
+    double width = MediaQuery.of(context).size.width;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!init) {
+        init = true;
+        if (Resources.userID != "") {
+          getAllVideos();
+          setState(() {
+            init = true;
+            // _progress = false;
+          });
+        } else {
+          setState(() {
+            init = true;
+            _progress = false;
+          });
+          text = "Please sign in...!";
+
+          Alert(
+            closeFunction: () {},
+            context: Resources.scaffoldKey.currentContext,
+            style: AlertStyle(
+              animationType: AnimationType.fromTop,
+              isCloseButton: false,
+              isOverlayTapDismiss: false,
+              descStyle: TextStyle(fontWeight: FontWeight.bold),
+              animationDuration: Duration(milliseconds: 400),
+              alertBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0.0),
+                side: BorderSide(
+                  color: Colors.grey,
+                ),
+              ),
+              titleStyle: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            type: AlertType.info,
+            title: "LOGIN",
+            desc: "You need to login to enable these features.",
+            buttons: [
+              DialogButton(
+                child: Text(
+                  "LOGIN",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, SIGN_IN);
+                },
+                color: Color.fromRGBO(0, 179, 134, 1.0),
+                radius: BorderRadius.circular(0.0),
+              ),
+            ],
+          ).show();
+        }
+      }
+    });
+
     return _progress
-        ? Center(
-            child: CircularProgressIndicator(),
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            :
+            _videoList.length > 0 ?
+            Container(
+                height: height,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Container(
+                        height: height * 0.1,
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _channelList.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                
+                                onTap: () {
+                                    Resources.navigationKey.currentState.pushNamed(
+                              '/channel_page',
+                              arguments: _channelList[index].channelID);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: CircleAvatar(
+                                    radius: height * 0.04,
+                                    backgroundImage:
+                                        _channelList[index].imgUrl == "" ||
+                                                _channelList[index].imgUrl == null
+                                            ? AssetImage("assets/no_image.png")
+                                            : CachedNetworkImageProvider(
+                                                _channelList[index].imgUrl),
+                                   
+                                  ),
+                                ),
+                              );
+                            })),
+                    SizedBox(height: height * 0.05),
+                    VideoListViewWidget(
+                      _videoList,
+                      getAllVideos,
+                      () => getAllVideos(),
+                      height: height * 0.65,
+                    ),
+                  ],
+                ),
+              )
+        : Center(
+            child: Text(text),
           )
-        : VideoListViewWidget(_videoList,getAllVideos);
+        ;
   }
 }

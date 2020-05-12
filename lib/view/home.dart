@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jewtube/model/channel.dart';
 import 'package:jewtube/util/Resources.dart';
+import 'package:jewtube/util/main_content.dart';
 import 'package:jewtube/view/add_video.dart';
 import 'package:jewtube/view/channelVideoList.dart';
 import 'package:jewtube/view/login/constants/constants.dart';
@@ -25,9 +26,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isSearchViewClicked = false;
   int _navIndex = 0;
-  Widget _bodyWidget = VideoListScreen();
-  final _drawerKey = GlobalKey<ScaffoldState>();
+  Color clr = Colors.grey;
   List<Channel> _channelList = List();
   bool _progress = true;
   File file;
@@ -62,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         : Scaffold(
             resizeToAvoidBottomPadding: false,
-            key: _drawerKey,
+            key: Resources.scaffoldKey,
             drawer: Resources.isAdmin
                 ? Drawer(
                     child: Column(
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Divider(
                             thickness: 5,
-                            color: Colors.grey,
+                            color: clr,
                           ),
                           _channelList.length > 0
                               ? Container()
@@ -110,11 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 print(channel.channelName);
                                 // Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (builder) => ChannelVideoList(
-                                            channel.channelName)));
+                                  Resources.navigationKey.currentState.pushNamed(
+                              '/channel_page',
+                              arguments: channel.channelID);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (builder) => ChannelVideoList(
+                                //             channel.channelName)));
                                 // setState(() {
                                 //   _bodyWidget = ChannelVideoList(channel.channelName);
                                 // });
@@ -122,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           Divider(
                             thickness: 2,
-                            color: Colors.grey,
+                            color: clr,
                           ),
                           ListTile(
                             onTap: () {
@@ -196,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 "title": chnlName,
                                               });
                                           print(response.data);
-                                            getAllChannels();
+                                          getAllChannels();
                                           setState(() {
                                             _progressAddChannel = false;
                                           });
@@ -205,7 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Fluttertoast.showToast(
                                               msg: "No File Selected",
                                               toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.CENTER,timeInSecForIos: 1,
+                                              gravity: ToastGravity.CENTER,
+                                              timeInSecForIos: 1,
                                               backgroundColor: Colors.red,
                                               textColor: Colors.white,
                                               fontSize: 16.0);
@@ -234,46 +239,106 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 : null,
             appBar: AppBar(
-              iconTheme: IconThemeData(color: Colors.grey),
-              backgroundColor: Colors.white,
-              title: Row(
-                children: <Widget>[
-                  Image.asset(
-                    "assets/logoT.png",
-                    width: 35,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "JewTube",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
+              iconTheme: IconThemeData(color: clr),
+              backgroundColor: ThemeData.dark().primaryColor,
+              title: isSearchViewClicked
+                  ? TextField(
+                      style: TextStyle(color: Colors.white),
+                      onSubmitted: (value) {
+                        isSearchViewClicked = false;
+                        print(value);
+                        Resources.navigationKey.currentState
+                            .pushReplacementNamed('/',
+                                arguments: {'issearch': true, 'txt': value});
+                        // setState(() {
+                        //   queryText = value;
+                        // });
+                      },
+                      textInputAction: TextInputAction.search,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Search',
+                        hintStyle: TextStyle(color: Colors.white70),
+                        icon: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isSearchViewClicked = false;
+                            });
+                          },
+                        ),
+                      ),
+                      autofocus: true,
+                      cursorColor: Colors.black,
+                    )
+                  : Row(
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/logoT.png",
+                          width: 35,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "JewTube",
+                          style: TextStyle(color: clr),
+                        ),
+                      ],
+                    ),
               leading: Resources.isAdmin
                   ? IconButton(
                       icon: Icon(FontAwesomeIcons.bars),
                       onPressed: () {
-                        _drawerKey.currentState.openDrawer();
+                        Resources.scaffoldKey.currentState.openDrawer();
                       })
                   : null,
               actions: <Widget>[
                 IconButton(
-                    icon: Icon(FontAwesomeIcons.search), onPressed: () {}),
+                  icon: isSearchViewClicked
+                      ? Icon(
+                          FontAwesomeIcons.times,
+                          color: clr,
+                        )
+                      : Icon(
+                          FontAwesomeIcons.search,
+                          color: clr,
+                        ),
+                  onPressed: () {
+                    //show search bar
+                    setState(() {
+                      if (isSearchViewClicked) {
+                        isSearchViewClicked = false;
+                      } else {
+                        isSearchViewClicked = true;
+                      }
+                    });
+                  },
+                ),
                 // IconButton(icon: Icon(FontAwesomeIcons.userCircle), onPressed: () {}),
-                IconButton(
-                    icon: Icon(FontAwesomeIcons.signOutAlt),
-                    onPressed: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs?.clear();
-                      Navigator.of(context).pushReplacementNamed(SPLASH_SCREEN);
-                    })
+                Resources.userID == ""
+                    ? IconButton(
+                        icon: Icon(FontAwesomeIcons.userAlt),
+                        onPressed: () async {
+                          Navigator.of(context).pushReplacementNamed(SIGN_IN);
+                        })
+                    : IconButton(
+                        icon: Icon(FontAwesomeIcons.signOutAlt),
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs?.clear();
+                          Navigator.of(context).pushReplacementNamed(SIGN_IN);
+                        })
               ],
             ),
-            body: _bodyWidget,
+            body: MainContent(),
             bottomNavigationBar: bmnav.BottomNav(
+              
+              color: ThemeData.dark().primaryColor,
               iconStyle: bmnav.IconStyle(onSelectColor: Colors.red),
               index: _navIndex,
               onTap: (i) {
@@ -283,21 +348,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   switch (i) {
                     case 0:
-                      _bodyWidget = VideoListScreen();
+                      // _bodyWidget = VideoListScreen();
+                      Resources.navigationKey.currentState.pushReplacementNamed(
+                          '/',
+                          arguments: {'issearch': false, 'txt': ""});
                       return;
-                    case 1:
-                      _bodyWidget = SubedVideoList();
+                    case 2:
+                      Resources.navigationKey.currentState
+                          .pushReplacementNamed('/sub_page');
+                      // _bodyWidget = SubedVideoList();
                       return;
                     default:
-                      _bodyWidget = VideoListScreen();
+                      // _bodyWidget = VideoListScreen();
+                      Resources.navigationKey.currentState.pushReplacementNamed(
+                          '/',
+                          arguments: {'issearch': false, 'txt': ""});
                   }
                 });
               },
               items: [
                 bmnav.BottomNavItem(Icons.home),
+                bmnav.BottomNavItem(Icons.whatshot),
                 bmnav.BottomNavItem(Icons.subscriptions),
-                bmnav.BottomNavItem(Icons.dashboard),
-                bmnav.BottomNavItem(Icons.notifications)
+                bmnav.BottomNavItem(Icons.folder)
               ],
             ),
             floatingActionButton: Resources.isAdmin
@@ -316,11 +389,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: Text(channel.channelName),
                               onTap: () {
                                 Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (builder) =>
-                                            AddVideoScreen(channel.channelID)));
+                                Resources.navigationKey.currentState.pushNamed(
+                                    '/add_video',
+                                    arguments: channel.channelID);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (builder) =>
+                                //             AddVideoScreen(channel.channelID)));
                               },
                             ),
                         ]),

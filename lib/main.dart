@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         DeviceOrientation.portraitDown,
       ]);
     return MaterialApp(
+      theme: ThemeData.dark(),
       title: 'JewTube',
       // home: SafeArea(
       //   child: AddVideoScreen("channel"),

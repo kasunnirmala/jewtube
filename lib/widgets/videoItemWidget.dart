@@ -6,9 +6,10 @@ import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/widgets/subscribe.dart';
 
 class VideoItemWidget extends StatefulWidget {
-  VideoItemWidget(this.videoModel, this.onClick);
+  VideoItemWidget(this.videoModel, this.onClick,this.onSub);
   final VideoModel videoModel;
   Function onClick;
+  Function onSub;
   @override
   _VideoItemWidgetState createState() => _VideoItemWidgetState();
 }
@@ -104,7 +105,9 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
 
                             setState(() {
                               widget.videoModel.sub = status;
+                              widget.onSub();
                             });
+                               
                           },
                         ),
                       )

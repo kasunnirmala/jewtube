@@ -2,13 +2,18 @@ import 'package:animated_card/animated_card.dart';
 import 'package:animated_card/animated_card_direction.dart';
 import 'package:flutter/material.dart';
 import 'package:jewtube/model/video.dart';
+import 'package:jewtube/util/Resources.dart';
 import 'package:jewtube/view/videoPlay.dart';
 import 'package:jewtube/widgets/videoItemWidgetHorizontal.dart';
 
 class VideoListViewWidget extends StatefulWidget {
-  VideoListViewWidget(this.videos, this.onRefresh);
+  VideoListViewWidget(this.videos, this.onRefresh, this.onSub,
+      {this.width = 0, this.height = 0});
   final List<VideoModel> videos;
   RefreshCallback onRefresh;
+  Function onSub;
+  double width;
+  double height;
   @override
   _VideoListViewWidgetState createState() => _VideoListViewWidgetState();
 }
@@ -16,8 +21,10 @@ class VideoListViewWidget extends StatefulWidget {
 class _VideoListViewWidgetState extends State<VideoListViewWidget> {
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    double width =
+        widget.width == 0 ? MediaQuery.of(context).size.width : widget.width;
+    double height =
+        widget.height == 0 ? MediaQuery.of(context).size.height : widget.height;
     return SingleChildScrollView(
       child: widget.videos.length > 0
           ? Container(
@@ -38,18 +45,25 @@ class _VideoListViewWidgetState extends State<VideoListViewWidget> {
                               elevation: 5,
                               child: VideoItemWidgetHorizontal(
                                   widget.videos[index], () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (builder) => VideoPlayerScreen(
-                                            widget.videos[index])));
-                              }),
+                                // Navigator.pushReplacement(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (builder) => VideoPlayerScreen(
+                                //             widget.videos[index])));
+                                Resources.navigationKey.currentState.pushNamed(
+                                    '/player',
+                                    arguments: widget.videos[index]);
+                              }, widget.onSub),
                             ),
                           ));
                     }),
               ),
             )
-          : Text("No Video Found"),
+          : Container(
+              child: Center(child: Text("No Video Found")),
+              height: height,
+              width: width,
+            ),
     );
   }
 }

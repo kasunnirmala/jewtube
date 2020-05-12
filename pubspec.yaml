@@ -43,6 +43,7 @@ dependencies:
   firebase_auth: 0.15.4
   cloud_firestore: 0.13.4
   firebase_analytics: 5.0.11
+  flappy_search_bar: ^1.7.2
   
 dev_dependencies:
   flutter_test:

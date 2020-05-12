@@ -40,24 +40,24 @@ class SplashScreenState extends State<SplashScreen>
         Resources.isAdmin = false;
         Resources.userID = "";
       });
-      Navigator.of(context).pushReplacementNamed(SIGN_IN);
+      Navigator.of(context).pushReplacementNamed(HOME);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    animationController = new AnimationController(
-        vsync: this, duration: new Duration(seconds: 1));
-    animation =
-        new CurvedAnimation(parent: animationController, curve: Curves.easeOut);
+    // animationController = new AnimationController(
+    //     vsync: this, duration: new Duration(seconds: 1));
+    // animation =
+    //     new CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
-    animation.addListener(() => this.setState(() {}));
-    animationController.forward();
+    // animation.addListener(() => this.setState(() {}));
+    // animationController.forward();
 
-    setState(() {
-      _visible = !_visible;
-    });
+    // setState(() {
+    //   _visible = !_visible;
+    // });
     startTime();
   }
 
@@ -85,8 +85,8 @@ class SplashScreenState extends State<SplashScreen>
             children: <Widget>[
               new Image.asset(
                 'assets/logo.png',
-                width: animation.value * 250,
-                height: animation.value * 250,
+                width:250,
+                height: 250,
               ),
             ],
           ),
