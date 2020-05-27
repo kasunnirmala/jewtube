@@ -51,7 +51,8 @@ Future<Map> getVideos(String path, {bool needSubsInQuery = false}) async {
           channelImage: video['channelImage'],
           videoTitle: video['videoTitle'],
           videoURL: video['videoURL'],
-          videoId: video['videoId'],
+          videoId: video['videoID'],
+          videoUuid: video['videoUUID'],
           sub: video['channelID'] == "" ||
                   subArray == null ||
                   subArray.length == 0

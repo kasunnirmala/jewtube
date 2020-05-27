@@ -42,7 +42,7 @@ class _SubscribeWidgetState extends State<SubscribeWidget> {
           } else {
             Alert(
               closeFunction: () {},
-              context: context,
+              context:  Resources.scaffoldKey.currentContext,
               style: AlertStyle(
                 animationType: AnimationType.fromTop,
                 isCloseButton: true,
@@ -69,8 +69,8 @@ class _SubscribeWidgetState extends State<SubscribeWidget> {
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, SIGN_IN);
+                    Navigator.pop( Resources.scaffoldKey.currentContext);
+                    Navigator.pushNamed( Resources.scaffoldKey.currentContext, SIGN_IN);
                   },
                   color: Color.fromRGBO(0, 179, 134, 1.0),
                   radius: BorderRadius.circular(0.0),

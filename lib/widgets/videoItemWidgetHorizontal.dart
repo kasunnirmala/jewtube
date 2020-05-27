@@ -39,7 +39,7 @@ class _VideoItemWidgetHorizontalState extends State<VideoItemWidgetHorizontal> {
                 child: widget.videoModel.thumbNail == null ||
                         widget.videoModel.thumbNail == ""
                     ? Image.asset(
-                        'assets/no_image.png',
+                        'assets/no_img.png',
                         fit: BoxFit.cover,
                         height: height * 0.1,
                         width: width * 0.3,

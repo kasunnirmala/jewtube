@@ -267,7 +267,7 @@ class _socialIconsRowState extends State<socialIconsRow> {
         children: <Widget>[
           CircleAvatar(
             radius: 15,
-            backgroundImage: AssetImage("assets/googlelogo.png"),
+            backgroundImage: AssetImage("assets/googlelogo_new.png"),
           ),
           SizedBox(
             width: 20,

@@ -92,6 +92,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             thickness: 5,
                             color: clr,
                           ),
+                          ListTile(title: Text("Show All Videos"),onTap: () {
+                            Resources.scaffoldKey.currentState.openEndDrawer();
+                              Resources.navigationKey.currentState.pushNamed(
+                              '/admin_all_videos');
+                          },),
+                           Divider(
+                            thickness: 5,
+                            color: clr,
+                          ),
                           _channelList.length > 0
                               ? Container()
                               : Container(
@@ -103,25 +112,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             ListTile(
                               leading: CircleAvatar(
                                 backgroundImage: channel.imgUrl == ""
-                                    ? AssetImage("assets/no_image.png")
+                                    ? AssetImage("assets/no_img.png")
                                     : CachedNetworkImageProvider(
                                         channel.imgUrl),
                               ),
                               title: Text(channel.channelName),
                               onTap: () {
                                 print(channel.channelName);
-                                // Navigator.pop(context);
+                                Resources.scaffoldKey.currentState.openEndDrawer();
                                   Resources.navigationKey.currentState.pushNamed(
                               '/channel_page',
                               arguments: channel.channelID);
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (builder) => ChannelVideoList(
-                                //             channel.channelName)));
-                                // setState(() {
-                                //   _bodyWidget = ChannelVideoList(channel.channelName);
-                                // });
+                       
                               },
                             ),
                           Divider(
@@ -138,7 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: CircularProgressIndicator(),
                                         )
                                       : StatefulBuilder(
-                                          // You need this, notice the parameters below:
                                           builder: (BuildContext context,
                                               StateSetter setState) {
                                           return Column(
@@ -277,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : Row(
                       children: <Widget>[
                         Image.asset(
-                          "assets/logoT.png",
+                          "assets/logo_new.png",
                           width: 35,
                         ),
                         SizedBox(
@@ -378,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       Alert(
                         style: AlertStyle(isCloseButton: false),
-                        context: context,
+                        context:  Resources.scaffoldKey.currentContext,
                         title: "SELECT CHANNEL",
                         content: Column(children: <Widget>[
                           for (var channel in _channelList)
@@ -389,14 +390,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: Text(channel.channelName),
                               onTap: () {
                                 Navigator.pop(context);
-                                Resources.navigationKey.currentState.pushNamed(
-                                    '/add_video',
-                                    arguments: channel.channelID);
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (builder) =>
-                                //             AddVideoScreen(channel.channelID)));
+                                // Resources.navigationKey.currentState.pushNamed(
+                                //     '/add_video',
+                                //     arguments: channel.channelID);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            AddVideoScreen(channel.channelID)));
                               },
                             ),
                         ]),

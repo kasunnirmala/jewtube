@@ -9,7 +9,8 @@ class VideoModel {
       @required this.videoURL,
       @required this.videoId,
       @required this.thumbNail,
-      @required this.sub});
+      @required this.sub,
+      @required this.videoUuid});
 
   final String channelID;
   final String channelName;
@@ -19,4 +20,5 @@ class VideoModel {
   final String thumbNail;
   bool sub;
   final String videoId;
+  final String videoUuid;
 }

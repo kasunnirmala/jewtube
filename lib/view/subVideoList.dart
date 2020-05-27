@@ -93,8 +93,8 @@ class _SubedVideoListState extends State<SubedVideoList> {
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, SIGN_IN);
+                  Navigator.pop( Resources.scaffoldKey.currentContext);
+                  Navigator.pushNamed( Resources.scaffoldKey.currentContext, SIGN_IN);
                 },
                 color: Color.fromRGBO(0, 179, 134, 1.0),
                 radius: BorderRadius.circular(0.0),
@@ -138,7 +138,7 @@ class _SubedVideoListState extends State<SubedVideoList> {
                                     backgroundImage:
                                         _channelList[index].imgUrl == "" ||
                                                 _channelList[index].imgUrl == null
-                                            ? AssetImage("assets/no_image.png")
+                                            ? AssetImage("assets/no_img.png")
                                             : CachedNetworkImageProvider(
                                                 _channelList[index].imgUrl),
                                    

@@ -71,7 +71,7 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
                             backgroundImage:
                                 widget.videoModel.channelImage == "" ||
                                         widget.videoModel.channelImage == null
-                                    ? AssetImage("assets/no_image.png")
+                                    ? AssetImage("assets/no_img.png")
                                     : CachedNetworkImageProvider(
                                         widget.videoModel.channelImage),
                           )),
