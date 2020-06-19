@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>673312298512-2mja8fl4c3tqca08grj17gcjuid7klrp.apps.googleusercontent.com</string>
+	<string>673312298512-ijh1530nn5hsnc2ug9aapt9u9m1sigm0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.673312298512-2mja8fl4c3tqca08grj17gcjuid7klrp</string>
+	<string>com.googleusercontent.apps.673312298512-ijh1530nn5hsnc2ug9aapt9u9m1sigm0</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCWB-QG2kNsvbbs6fJYxk2uNErFSr4DxGg</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.sevensynco.jewtube</string>
+	<string>com.videoapp.jewtube</string>
 	<key>PROJECT_ID</key>
 	<string>jewtube-76d06</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:673312298512:ios:d06198c4e53984f59edc95</string>
+	<string>1:673312298512:ios:293c39c071dc885b9edc95</string>
 	<key>DATABASE_URL</key>
 	<string>https://jewtube-76d06.firebaseio.com</string>
 </dict>
